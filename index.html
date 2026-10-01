@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jejak Proklamasi - MPI Pendidikan Pancasila MTs</title>
+    <style>
+        :root {
+            /* Palet Warna Ungu Pastel & Emas Elegan */
+            --primary-light: #F4EEFF; /* Ungu sangat muda untuk background */
+            --primary-pastel: #DCD6F7; /* Ungu pastel cerah */
+            --primary-mid: #A6B1E1; /* Ungu kebiruan lembut */
+            --primary-dark: #424874; /* Ungu tua elegan untuk teks dan tombol */
+            --gold-light: #F9E79F;
+            --gold-main: #D4AF37; /* Emas klasik */
+            --gold-dark: #B8860B;
+            --text-dark: #2C3E50;
+            --text-light: #FFFFFF;
+            --success: #27AE60;
+            --error: #E74C3C;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), #2a2e4d);
+            color: var(--gold-main);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-bottom: 4px solid var(--gold-main);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            color: var(--primary-pastel);
+            font-size: 0.9rem;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 24px rgba(66, 72, 116, 0.08);
+            border-top: 5px solid var(--gold-main);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M20 0l20 20-20 20L0 20z" fill="%23DCD6F7" fill-opacity="0.1"/></svg>');
+            pointer-events: none;
+        }
+
+        .card h2 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-local {
+            background: linear-gradient(145deg, #fff, var(--primary-light));
+            border-top: 5px solid var(--primary-mid);
+            border-left: 5px solid var(--primary-mid);
+        }
+
+        .btn {
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            width: 100%;
+        }
+
+        @media (min-width: 600px) {
+            .btn { width: auto; }
+        }
+
+        .btn:hover {
+            background-color: var(--gold-main);
+            color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-gold {
+            background-color: var(--gold-main);
+            color: var(--primary-dark);
+        }
+        
+        .btn-gold:hover {
+            background-color: var(--primary-dark);
+            color: var(--gold-main);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .sortable-list {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0;
+        }
+
+        .sortable-item {
+            background: var(--text-light);
+            border: 2px solid var(--primary-pastel);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            color: var(--primary-dark);
+            transition: transform 0.2s, border-color 0.2s;
+            touch-action: manipulation; /* Optimasi sentuhan mobile */
+        }
+
+        .sortable-item:active {
+            transform: scale(0.98);
+        }
+
+        .sortable-item.dragging {
+            opacity: 0.5;
+            border-color: var(--gold-main);
+        }
+
+        .controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .control-btn {
+            background: var(--primary-pastel);
+            border: none;
+            color: var(--primary-dark);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover { background: var(--primary-mid); color: white; }
+
+        .feedback-box {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            font-weight: 600;
+            animation: fadeIn 0.3s;
+        }
+        .feedback-success { background: #D5F5E3; color: var(--success); border-left: 5px solid var(--success); }
+        .feedback-error { background: #FADBD8; color: var(--error); border-left: 5px solid var(--error); }
+
+        .quiz-container { margin-top: 1rem; }
+        .question-text { font-size: 1.2rem; font-weight: bold; color: var(--primary-dark); margin-bottom: 1.5rem; }
+        .options-grid { display: grid; gap: 10px; grid-template-columns: 1fr; }
+        
+        .option-btn {
+            background: white;
+            border: 2px solid var(--primary-mid);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+        }
+        .option-btn:hover { background: var(--primary-light); border-color: var(--primary-dark); }
+        .option-btn.correct { background: #D5F5E3; border-color: var(--success); color: var(--success); }
+        .option-btn.wrong { background: #FADBD8; border-color: var(--error); color: var(--error); }
+        .option-btn:disabled { cursor: not-allowed; }
+
+        .explanation-box {
+            background: var(--primary-light);
+            border: 2px dashed var(--gold-main);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--gold-main);
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Styling Form Database & Modal */
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--primary-mid);
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--gold-main);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+            border-top: 5px solid var(--gold-main);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* Utilities */
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 1rem; }
+        .mt-2 { margin-top: 2rem; }
+        .badge { display: inline-block; padding: 4px 10px; background: var(--gold-main); color: var(--primary-dark); border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px;}
+        .highlight { font-weight: bold; color: var(--primary-dark); }
+
+        .app-footer {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            background-color: var(--primary-pastel);
+            color: var(--primary-dark);
+            margin-top: auto;
+            border-top: 3px solid var(--primary-mid);
+        }
+        
+        .dev-profile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .dev-profile img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--gold-main);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .dev-profile img:hover {
+            transform: scale(1.1);
+        }
+        
+        .dev-profile-text {
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .marquee-wrapper {
+            background-color: var(--primary-dark);
+            color: var(--gold-light);
+            padding: 8px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            width: 100%;
+            border-bottom: 2px solid var(--gold-main);
+            z-index: 101;
+        }
+
+        .marquee-text {
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee 18s linear infinite;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="marquee-wrapper">
+        <div class="marquee-text">
+            ✨ Selamat Datang di Media Pembelajaran Interaktif Jejak Proklamasi | Dikembangkan oleh: Imelda Ishak, S.Pd - MTs Negeri 1 Gorontalo Utara ✨
+        </div>
+    </div>
+
+    <header>
+        <h1>🇮🇩 Jejak Proklamasi</h1>
+        <p>Eksplorasi Sejarah - Pendidikan Pancasila Fase D</p>
+        <button onclick="openConfigModal()" style="position: absolute; right: 15px; top: 15px; background: rgba(255,255,255,0.2); border: 1px solid var(--gold-main); color: white; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.8rem;">
+            ⚙️ Pengaturan Guru
+        </button>
+    </header>
+
+    <main>
+        <section id="beranda" class="page active">
+            <div class="card text-center">
+                <h2>Selamat Datang, Patriot Muda! ⚓</h2>
+                <p>Mari menelusuri jejak perjuangan bangsa menuju kemerdekaan Republik Indonesia.</p>
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='10' y='20' width='80' height='40' fill='%23E74C3C'/><rect x='10' y='60' width='80' height='40' fill='%23FFFFFF'/></svg>" 
+                     alt="Bendera Merah Putih" style="width: 150px; height: auto; margin: 20px auto; display: block; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                
+                <div class="card card-local text-left mt-1">
+                    <span class="badge">Konteks Lokal Gorontalo</span>
+                    <p style="font-size: 0.95rem;">Tahukah kamu? Semangat merdeka sudah menyala di pesisir Gorontalo pada <b>23 Januari 1942</b> (Hari Patriotik). Pahlawan Nasional kita, <b>Nani Wartabone</b>, memproklamasikan kemerdekaan dan mengibarkan bendera Merah Putih jauh sebelum proklamasi nasional 1945. Ini bukti besarnya Cinta Tanah Air rakyat agraris dan pesisir Gorontalo!</p>
+                </div>
+
+                <p class="mt-1">Dalam modul ini, kita akan belajar sejarah proklamasi 17 Agustus 1945 secara nasional, menyusun kronologinya, dan menguji wawasanmu.</p>
+                
+                <div class="nav-buttons">
+                    <button class="btn btn-gold" onclick="navigasi('materi')">Mulai Eksplorasi 🚀</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="materi" class="page">
+            <div class="card">
+                <h2>📜 Catatan Sejarah Proklamasi</h2>
+                
+                <div style="border-left: 4px solid var(--primary-mid); padding-left: 15px; margin-bottom: 20px;">
+                    <h3 style="color: var(--primary-dark);">1. Menyerahnya Jepang (Agustus 1945)</h3>
+                    <p>Setelah kota Hiroshima (6 Agustus) dan Nagasaki (9 Agustus) dibom atom oleh Sekutu, Jepang menyerah tanpa syarat pada 14 Agustus 1945. Ini menciptakan <span class="highlight">"Vacuum of Power"</span> (Kekosongan Kekuasaan) di Indonesia.</p>
+                </div>
+
+                <div style="border-left: 4px solid var(--primary-mid); padding-left: 15px; margin-bottom: 20px;">
+                    <h3 style="color: var(--primary-dark);">2. Peristiwa Rengasdengklok (16 Agustus 1945)</h3>
+                    <p>Golongan muda (Wikana, Chairul Saleh, dkk) mengamankan Soekarno-Hatta ke Rengasdengklok, Karawang. Tujuannya? <span class="highlight">Menjauhkan mereka dari pengaruh Jepang</span> dan mendesak agar proklamasi segera dilakukan tanpa campur tangan PPKI (bentukan Jepang).</p>
+                </div>
+
+                <div style="border-left: 4px solid var(--primary-mid); padding-left: 15px; margin-bottom: 20px;">
+                    <h3 style="color: var(--primary-dark);">3. Perumusan Teks (Malam 16 Agustus 1945)</h3>
+                    <p>Berlangsung di rumah Laksamana Maeda (perwira Jepang yang bersimpati pada Indonesia). Teks dirumuskan oleh Soekarno, Hatta, dan Ahmad Soebardjo. Teks kemudian diketik oleh <span class="highlight">Sayuti Melik</span>.</p>
+                </div>
+
+                <div style="border-left: 4px solid var(--primary-mid); padding-left: 15px; margin-bottom: 20px;">
+                    <h3 style="color: var(--primary-dark);">4. Detik-detik Proklamasi (17 Agustus 1945)</h3>
+                    <p>Teks dibacakan pukul 10.00 WIB di Jl. Pegangsaan Timur No. 56, Jakarta. Bendera pusaka dijahit oleh <span class="highlight">Ibu Fatmawati</span>. Bangsa Indonesia resmi menyatakan kemerdekaannya!</p>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn" onclick="navigasi('beranda')">⬅️ Kembali</button>
+                    <button class="btn btn-gold" onclick="navigasi('interaktif')">Uji Kronologi 🧩</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="interaktif" class="page">
+            <div class="card">
+                <h2>🧩 Tantangan Kronologi</h2>
+                <p>Susunlah peristiwa berikut agar berurutan dari kejadian paling awal hingga paling akhir! (Gunakan panah naik/turun atau geser kartu)</p>
+                
+                <ul class="sortable-list" id="chronologyList">
+                    <!-- Item akan diacak lewat JavaScript -->
+                    <li class="sortable-item" data-id="4">D. Pembacaan Teks Proklamasi di Jl. Pegangsaan Timur
+                        <div class="controls">
+                            <button class="control-btn" onclick="moveUp(this)">⬆️</button>
+                            <button class="control-btn" onclick="moveDown(this)">⬇️</button>
+                        </div>
+                    </li>
+                    <li class="sortable-item" data-id="1">A. Jepang Menyerah Tanpa Syarat kepada Sekutu
+                        <div class="controls">
+                            <button class="control-btn" onclick="moveUp(this)">⬆️</button>
+                            <button class="control-btn" onclick="moveDown(this)">⬇️</button>
+                        </div>
+                    </li>
+                    <li class="sortable-item" data-id="3">C. Perumusan Teks di Rumah Laksamana Maeda
+                        <div class="controls">
+                            <button class="control-btn" onclick="moveUp(this)">⬆️</button>
+                            <button class="control-btn" onclick="moveDown(this)">⬇️</button>
+                        </div>
+                    </li>
+                    <li class="sortable-item" data-id="2">B. Peristiwa Rengasdengklok
+                        <div class="controls">
+                            <button class="control-btn" onclick="moveUp(this)">⬆️</button>
+                            <button class="control-btn" onclick="moveDown(this)">⬇️️</button>
+                        </div>
+                    </li>
+                </ul>
+
+                <div id="chrono-feedback" class="feedback-box"></div>
+
+                <div class="nav-buttons">
+                    <button class="btn" onclick="navigasi('materi')">⬅️ Materi</button>
+                    <button class="btn btn-gold" onclick="checkChronology()">Cek Jawaban ✔️</button>
+                    <button class="btn" id="btnToQuiz" style="display:none;" onclick="navigasi('evaluasi')">Lanjut Kuis 📝</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="evaluasi" class="page">
+            <div class="card" id="quiz-panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2>📝 Misi Evaluasi</h2>
+                    <span class="badge" id="quiz-progress">Soal 1/10</span>
+                </div>
+                
+                <div class="quiz-container">
+                    <p class="question-text" id="question-text">Memuat pertanyaan...</p>
+                    <div class="options-grid" id="options-grid">
+                        <!-- Pilihan jawaban di-render via JS -->
+                    </div>
+                </div>
+
+                <div class="explanation-box" id="explanation-box">
+                    <strong>💡 Pembahasan Edukatif:</strong>
+                    <p id="explanation-text"></p>
+                </div>
+
+                <div class="nav-buttons mt-1">
+                    <button class="btn btn-gold" id="btn-next-quiz" style="display:none; width: 100%;" onclick="nextQuestion()">Soal Selanjutnya ➡️️</button>
+                </div>
+            </div>
+
+            <div class="card text-center" id="result-panel" style="display: none;">
+                <h2>🏆 Misi Selesai!</h2>
+                <p>Skor Akhir Kamu:</p>
+                <div class="score-display" id="final-score">100</div>
+                
+                <!-- Ringkasan Jawaban Siswa -->
+                <div style="display: flex; gap: 10px; justify-content: center; margin: 15px 0;">
+                    <span class="badge" style="background: #D5F5E3; color: var(--success); font-size: 0.9rem; padding: 8px 16px;" id="badge-correct">Benar: 0</span>
+                    <span class="badge" style="background: #FADBD8; color: var(--error); font-size: 0.9rem; padding: 8px 16px;" id="badge-wrong">Salah: 0</span>
+                </div>
+
+                <div id="score-message" class="mt-1" style="font-size: 1.1rem; margin-bottom: 20px;"></div>
+
+                <!-- Form Simpan Nilai ke Google Sheets -->
+                <div class="card card-local text-left mt-1" style="border-top: 4px solid var(--gold-main);">
+                    <h3 style="color: var(--primary-dark); font-size: 1.1rem; margin-bottom: 10px;">📊 Kirim Hasil ke Database Guru</h3>
+                    <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;">Isi data diri di bawah ini agar nilai dan rincian jawabanmu terekam di Google Sheets Ibu Guru:</p>
+                    
+                    <div class="form-group">
+                        <label for="student-name">Nama Lengkap Siswa: <span style="color:red">*</span></label>
+                        <input type="text" id="student-name" class="form-control" placeholder="Contoh: Ahmad Abdullah">
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <div class="form-group" style="flex: 1; min-width: 120px;">
+                            <label for="student-class">Kelas / Rombel: <span style="color:red">*</span></label>
+                            <input type="text" id="student-class" class="form-control" placeholder="Contoh: VII-1">
+                        </div>
+                        <div class="form-group" style="flex: 1; min-width: 120px;">
+                            <label for="student-no">No. Absen / NISN:</label>
+                            <input type="text" id="student-no" class="form-control" placeholder="Contoh: 05">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-gold" id="btn-submit-score" onclick="submitToGoogleSheet()" style="width: 100%; margin-top: 10px;">
+                        📤 Kirim Nilai & Jawaban ke Spreadsheet
+                    </button>
+
+                    <div id="submit-status" class="text-center" style="display: none;"></div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn" onclick="resetQuiz()">Ulangi Kuis 🔄</button>
+                    <button class="btn btn-gold" onclick="navigasi('beranda')">Kembali ke Beranda 🏠</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Pengaturan Guru / Integrasi Google Sheets -->
+    <div id="configModal" class="modal-overlay">
+        <div class="modal-card">
+            <h2 style="color: var(--primary-dark); margin-bottom: 10px;">⚙️ Pengaturan Integrasi Database</h2>
+            <p style="font-size: 0.9rem; margin-bottom: 15px;">Masukkan URL **Google Apps Script Web App** milik Anda untuk merekam otomatis nilai & analisis jawaban siswa.</p>
+
+            <div class="form-group">
+                <label for="script-url">URL Web App Google Apps Script:</label>
+                <input type="text" id="script-url" class="form-control" placeholder="https://script.google.com/macros/s/.../exec">
+            </div>
+
+            <div style="background: var(--primary-light); padding: 12px; border-radius: 8px; font-size: 0.85rem; border-left: 4px solid var(--primary-dark); margin-bottom: 15px;">
+                <strong>📌 Langkah Membuat Backend Apps Script & Spreadsheet (Khusus Guru):</strong>
+                <ol style="margin-left: 18px; margin-top: 5px; line-height: 1.5;">
+                    <li>Buat Google Sheets baru di Google Drive Anda.</li>
+                    <li>Buka menu <b>Ekstensi</b> ➡️ <b>Apps Script</b>.</li>
+                    <li>Hapus seluruh kode default di <code>Code.gs</code>, lalu tempelkan seluruh kode backend <b>Google Apps Script</b> yang telah disediakan.</li>
+                    <li>Klik tombol <b>Simpan (💾)</b>.</li>
+                    <li>Klik <b>Terapkan (Deploy)</b> ➡️ <b>Penerapan Baru (New Deployment)</b>.</li>
+                    <li>Pilih Jenis: <b>Aplikasi Web (Web App)</b>.</li>
+                    <li>Atur "Siapa yang memiliki akses": <b>Siapa saja (Anyone)</b>.</li>
+                    <li>Klik <b>Terapkan</b>, izinkan akses Google Account, lalu salin <b>URL Web App</b> dan tempelkan di kolom di atas!</li>
+                    <li><i>(Sistem akan otomatis membuat Sheet <b>Hasil Siswa</b> dan Sheet <b>Soal</b> saat pengerjaan pertama kali)</i>.</li>
+                </ol>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn" style="width: auto; padding: 8px 18px;" onclick="closeConfigModal()">Batal</button>
+                <button class="btn btn-gold" style="width: auto; padding: 8px 18px;" onclick="saveConfig()">Simpan URL</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="app-footer">
+        <div class="dev-profile">
+            <a href="https://freeimage.host/" target="_blank" rel="noopener noreferrer">
+                <img src="https://iili.io/na4I3Zu.jpg" alt="Foto Pengembang" border="0">
+            </a>
+            <div class="dev-profile-text">
+                <strong>Imelda Ishak, S.Pd</strong><br>
+                <i>MTsN 1 Gorontalo Utara</i>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- KONFIGURASI DATABASE GOOGLE SHEETS ---
+        let googleSheetUrl = localStorage.getItem('proklamasi_sheet_url') || 'https://script.google.com/macros/s/AKfycbxIkVfzR_9f4Qe5OaTheUCWd1jbPVVx50XNpbNUUQuf04DUIjOyfXyg58sC0K-LBiqz/exec';
+        let statusKronologiSelesai = false;
+        let userAnswers = []; // Menampung rincian jawaban siswa untuk analisis guru
+
+        function openConfigModal() {
+            document.getElementById('script-url').value = googleSheetUrl;
+            document.getElementById('configModal').style.display = 'flex';
+        }
+
+        function closeConfigModal() {
+            document.getElementById('configModal').style.display = 'none';
+        }
+
+        function saveConfig() {
+            const url = document.getElementById('script-url').value.trim();
+            googleSheetUrl = url;
+            localStorage.setItem('proklamasi_sheet_url', url);
+            closeConfigModal();
+            showNoticeModal("✅ Berhasil!", "URL Database Google Sheets berhasil disimpan di memori browser ini.");
+        }
+
+        function showNoticeModal(title, text) {
+            const statusDiv = document.getElementById('submit-status');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status-badge feedback-success';
+            statusDiv.innerText = `${title} ${text}`;
+        }
+
+        // --- SISTEM NAVIGASI ---
+        function navigasi(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        // --- SISTEM KRONOLOGI (DRAG/TAP TO MOVE) ---
+        function moveUp(btn) {
+            const li = btn.closest('li');
+            const prev = li.previousElementSibling;
+            if (prev) {
+                li.parentNode.insertBefore(li, prev);
+            }
+        }
+
+        function moveDown(btn) {
+            const li = btn.closest('li');
+            const next = li.nextElementSibling;
+            if (next) {
+                li.parentNode.insertBefore(next, li);
+            }
+        }
+
+        function checkChronology() {
+            const items = document.querySelectorAll('.sortable-item');
+            let urutan = [];
+            items.forEach(item => urutan.push(item.getAttribute('data-id')));
+            
+            const feedback = document.getElementById('chrono-feedback');
+            feedback.style.display = 'block';
+
+            if (urutan.join(',') === '1,2,3,4') {
+                statusKronologiSelesai = true;
+                feedback.className = 'feedback-box feedback-success';
+                feedback.innerHTML = '🎉 Tepat Sekali! Kamu berhasil menyusun urutan sejarah dengan benar. Logika dan ingatan sejarahmu sangat kuat!';
+                document.getElementById('btnToQuiz').style.display = 'inline-flex';
+            } else {
+                statusKronologiSelesai = false;
+                feedback.className = 'feedback-box feedback-error';
+                feedback.innerHTML = '🤔 Urutannya belum tepat. Ingat: Kekosongan kekuasaan memicu aksi pemuda (Rengasdengklok), barulah merumuskan teks, lalu dibacakan. Yuk coba geser lagi!';
+                document.getElementById('btnToQuiz').style.display = 'none';
+            }
+        }
+
+        // --- PENGIRIMAN DATA KE GOOGLE SHEETS ---
+        async function submitToGoogleSheet() {
+            const nama = document.getElementById('student-name').value.trim();
+            const kelas = document.getElementById('student-class').value.trim();
+            const noAbsen = document.getElementById('student-no').value.trim();
+            const statusDiv = document.getElementById('submit-status');
+            const submitBtn = document.getElementById('btn-submit-score');
+
+            if (!nama || !kelas) {
+                statusDiv.style.display = 'block';
+                statusDiv.className = 'status-badge feedback-error';
+                statusDiv.innerText = '⚠️ Silakan isi Nama Lengkap dan Kelas terlebih dahulu!';
+                return;
+            }
+
+            if (!googleSheetUrl) {
+                statusDiv.style.display = 'block';
+                statusDiv.className = 'status-badge feedback-error';
+                statusDiv.innerText = '⚠️ URL Google Sheets belum diatur oleh Guru. Klik ikon ⚙️ Pengaturan Guru di atas.';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = '⏳ Mengirim Nilai...';
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status-badge';
+            statusDiv.style.background = 'var(--primary-pastel)';
+            statusDiv.style.color = 'var(--primary-dark)';
+            statusDiv.innerText = 'Mengirim data & analisis jawaban ke Google Sheets...';
+
+            // Hitung statistik jawaban benar dan salah
+            let jumlahBenar = userAnswers.filter(a => a.isCorrect).length;
+            let jumlahSalah = bankSoal.length - jumlahBenar;
+
+            // Format rincian jawaban per nomor untuk dianalisis guru di Spreadsheet
+            // Format: "1: B [Benar] | 2: A [Salah, Kunci: C] | ..."
+            let detailJawaban = userAnswers.map((item, index) => {
+                let status = item.isCorrect 
+                    ? `[Benar]` 
+                    : `[Salah, Kunci: ${item.correctOption}]`;
+                return `${index + 1}: ${item.selectedOption} ${status}`;
+            }).join(" | ");
+
+            const payload = {
+                nama: nama,
+                kelas: kelas,
+                noAbsen: noAbsen || '-',
+                statusKronologi: statusKronologiSelesai ? 'Lulus (100%)' : 'Belum Selesai',
+                skorKuis: score,
+                jumlahBenar: jumlahBenar,
+                jumlahSalah: jumlahSalah,
+                detailJawaban: detailJawaban
+            };
+
+            try {
+                await fetch(googleSheetUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                statusDiv.className = 'status-badge feedback-success';
+                statusDiv.innerText = '🎉 Berhasil! Nilai & rincian jawabanmu telah terkirim ke Spreadsheet Ibu Guru.';
+                submitBtn.innerText = '✔️ Terkirim';
+            } catch (error) {
+                statusDiv.className = 'status-badge feedback-error';
+                statusDiv.innerText = '❌ Gagal mengirim. Pastikan HP/Laptop terhubung ke internet!';
+                submitBtn.disabled = false;
+                submitBtn.innerText = '📤 Coba Kirim Lagi';
+            }
+        }
+
+        // --- SISTEM KUIS EVALUASI ---
+        const bankSoal = [
+            {
+                q: "Tahukah kamu, peristiwa sejarah di Gorontalo yang menunjukkan semangat kemerdekaan 3 tahun sebelum Proklamasi 1945 dipimpin oleh tokoh nasional...",
+                options: ["Sultan Hasanuddin", "Nani Wartabone", "Pangeran Diponegoro", "Kapitan Pattimura"],
+                ans: 1,
+                exp: "Nani Wartabone memimpin Hari Patriotik Gorontalo pada 23 Januari 1942. Ini bukti Cinta Tanah Air masyarakat Gorontalo sejak dini."
+            },
+            {
+                q: "Apa alasan utama golongan muda mengamankan Ir. Soekarno dan Drs. Moh. Hatta ke Rengasdengklok?",
+                options: ["Agar tidak ditangkap oleh tentara Belanda", "Memaksa mereka menyusun teks proklamasi di sana", "Menjauhkan dari pengaruh Jepang dan mendesak proklamasi secepatnya", "Menyelamatkan mereka dari kemarahan rakyat"],
+                ans: 2,
+                exp: "Golongan muda tidak ingin kemerdekaan dianggap sebagai 'hadiah' dari PPKI bentukan Jepang. Mereka ingin proklamasi murni atas usaha bangsa sendiri."
+            },
+            {
+                q: "Mengapa perumusan teks proklamasi dilakukan di rumah Laksamana Maeda (seorang perwira Jepang)?",
+                options: ["Karena ia adalah jenderal tertinggi Jepang", "Karena tempat tersebut dijamin keamanannya dari patroli tentara Angkatan Darat Jepang", "Karena ia yang menyuruh Indonesia merdeka", "Karena rumah tersebut dekat dengan Pegangsaan Timur"],
+                ans: 1,
+                exp: "Laksamana Maeda bersimpati pada perjuangan Indonesia dan menjamin keamanan tokoh-tokoh Indonesia dari intervensi tentara Angkatan Darat (Rikugun) Jepang."
+            },
+            {
+                q: "Siapakah tokoh yang mengetik teks proklamasi yang telah disempurnakan ejaannya?",
+                options: ["Sayuti Melik", "Ahmad Soebardjo", "B.M. Diah", "Wikana"],
+                ans: 0,
+                exp: "Sayuti Melik bertugas mengetik naskah tulisan tangan Ir. Soekarno, dan melakukan beberapa perubahan penting seperti 'tempoh' menjadi 'tempo'."
+            },
+            {
+                q: "Momen apa yang menyebabkan terjadinya 'Kekosongan Kekuasaan' di Indonesia pada Agustus 1945?",
+                options: ["Kekalahan Belanda dari Jepang tahun 1942", "Dibom atomnya kota Hiroshima dan Nagasaki sehingga Jepang menyerah", "Proklamasi 17 Agustus 1945", "Pemulangan tentara Jepang ke negaranya"],
+                ans: 1,
+                exp: "Jatuhnya bom atom memaksa Jepang menyerah tanpa syarat pada Sekutu (14 Agustus). Saat itu Sekutu belum datang, dan Jepang sudah kalah, menciptakan kekosongan kekuasaan."
+            },
+            {
+                q: "Siapakah pahlawan perempuan yang menjahit Bendera Pusaka Sang Saka Merah Putih?",
+                options: ["Cut Nyak Dien", "Ibu Fatmawati", "R.A. Kartini", "Dewi Sartika"],
+                ans: 1,
+                exp: "Ibu Fatmawati, istri Ir. Soekarno, menjahit bendera merah putih yang dikibarkan saat proklamasi 17 Agustus 1945."
+            },
+            {
+                q: "Kalimat pertama naskah Proklamasi yang berbunyi 'Kami bangsa Indonesia dengan ini menjatakan kemerdekaan Indonesia' merupakan buah pikiran dari...",
+                options: ["Ahmad Soebardjo", "Ir. Soekarno", "Drs. Moh. Hatta", "Sukarni"],
+                ans: 0,
+                exp: "Kalimat pertama adalah gagasan Ahmad Soebardjo yang menyatakan kemauan bangsa untuk merdeka. Kalimat kedua dari Moh. Hatta tentang pemindahan kekuasaan."
+            },
+            {
+                q: "Di manakah lokasi persis pembacaan teks proklamasi kemerdekaan Republik Indonesia?",
+                options: ["Lapangan Ikada (Monas)", "Jalan Pegangsaan Timur No. 56", "Rumah Laksamana Maeda", "Rengasdengklok"],
+                ans: 1,
+                exp: "Awalnya direncanakan di Lapangan Ikada, namun karena alasan keamanan dipindah ke halaman rumah Ir. Soekarno di Jl. Pegangsaan Timur No. 56."
+            },
+            {
+                q: "Nilai Pancasila apa yang paling menonjol dari kesepakatan antara golongan muda dan tua setelah peristiwa Rengasdengklok?",
+                options: ["Sila 1 (Ketuhanan)", "Sila 2 (Kemanusiaan)", "Sila 3 (Persatuan) dan Sila 4 (Musyawarah)", "Sila 5 (Keadilan Sosial)"],
+                ans: 2,
+                exp: "Meski sempat bersitegang, golongan tua dan muda mengutamakan Persatuan bangsa, lalu duduk bersama (Musyawarah) merumuskan teks proklamasi."
+            },
+            {
+                q: "Sebagai siswa MTs di Gorontalo, sikap apa yang mencerminkan keteladanan peristiwa Proklamasi dan Hari Patriotik dalam kehidupan sehari-hari?",
+                options: ["Menunggu perintah guru sebelum belajar", "Rukun dengan teman, rajin belajar (Cinta Ilmu), dan melestarikan budaya lokal", "Sering bolos untuk bermain di pantai", "Hanya berteman dengan orang yang sesuku"],
+                ans: 1,
+                exp: "Cinta Ilmu dan Cinta Tanah Air ditunjukkan dengan kemandirian belajar, menjaga persatuan dengan teman, dan menghargai lingkungan agraris serta pesisir."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadQuestion() {
+            answered = false;
+            document.getElementById('explanation-box').style.display = 'none';
+            document.getElementById('btn-next-quiz').style.display = 'none';
+            document.getElementById('quiz-progress').innerText = `Soal ${currentQuestion + 1} / ${bankSoal.length}`;
+            
+            const qData = bankSoal[currentQuestion];
+            document.getElementById('question-text').innerText = `${currentQuestion + 1}. ${qData.q}`;
+            
+            const optionsGrid = document.getElementById('options-grid');
+            optionsGrid.innerHTML = '';
+            
+            qData.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = `${String.fromCharCode(65 + index)}. ${opt}`;
+                btn.onclick = () => checkAnswer(index, btn);
+                optionsGrid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            if (answered) return;
+            answered = true;
+            
+            const qData = bankSoal[currentQuestion];
+            const allBtns = document.querySelectorAll('.option-btn');
+            
+            allBtns.forEach(btn => btn.disabled = true);
+            
+            let isCorrect = (selectedIndex === qData.ans);
+
+            // Simpan detail jawaban siswa untuk keperluan rekapitulasi analisis guru
+            userAnswers[currentQuestion] = {
+                questionIndex: currentQuestion,
+                selectedOption: String.fromCharCode(65 + selectedIndex),
+                selectedText: qData.options[selectedIndex],
+                correctOption: String.fromCharCode(65 + qData.ans),
+                isCorrect: isCorrect
+            };
+
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                score += 10;
+            } else {
+                btnElement.classList.add('wrong');
+                allBtns[qData.ans].classList.add('correct');
+            }
+
+            const expBox = document.getElementById('explanation-box');
+            document.getElementById('explanation-text').innerText = qData.exp;
+            expBox.style.display = 'block';
+            
+            const nextBtn = document.getElementById('btn-next-quiz');
+            nextBtn.innerText = currentQuestion === bankSoal.length - 1 ? "Lihat Hasil Akhir 🏆" : "Soal Selanjutnya ➡️";
+            nextBtn.style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < bankSoal.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-panel').style.display = 'none';
+            document.getElementById('result-panel').style.display = 'block';
+            
+            document.getElementById('final-score').innerText = score;
+            
+            let jumlahBenar = userAnswers.filter(a => a && a.isCorrect).length;
+            let jumlahSalah = bankSoal.length - jumlahBenar;
+
+            document.getElementById('badge-correct').innerText = `Benar: ${jumlahBenar}`;
+            document.getElementById('badge-wrong').innerText = `Salah: ${jumlahSalah}`;
+
+            let message = "";
+            if (score >= 90) message = "🌟 Luar Biasa! Kamu adalah Patriot Sejati!";
+            else if (score >= 70) message = "👍 Bagus Sekali! Pemahaman sejarahmu sudah mantap.";
+            else message = "💪 Jangan menyerah! Yuk baca lagi materinya dan coba ulangi.";
+            
+            document.getElementById('score-message').innerText = message;
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            userAnswers = [];
+            document.getElementById('quiz-panel').style.display = 'block';
+            document.getElementById('result-panel').style.display = 'none';
+            loadQuestion();
+        }
+
+        window.onload = () => {
+            loadQuestion();
+        };
+    </script>
+</body>
+</html>
